@@ -5,8 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Rock Paper Scissors game</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
   </head>
   <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <div id="playerId"></div>
+    <form class="entry_val">
+      Enter your name: <input id="playerName" type="text" /><br />
+      <input id="addName" type="submit" value="Add Name" /> <br />
+    </form>
+    <div id="name1">
+      <h3>Waiting for player#1:</h3>
+      <p></p>
+    </div>
+    <br /><br /><br /><br />
+    <div id="name2">
+      <h3>Waiting for player#2:</h3>
+      <p></p>
+    </div>
+    <br /><br /><br /><br />
+    <div id="result"></div>
+    <script src="assets/js/javascript.js"></script>
   </body>
 </html>
