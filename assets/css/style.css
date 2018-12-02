@@ -14,3 +14,7 @@
 #playerId {
   margin: 10px auto;
 }
+.choices1,
+.choices2 {
+  visibility: hidden;
+}
