@@ -23,6 +23,18 @@ var connectionsRef = database.ref("/connections");
 
 var connectedRef = database.ref(".info/connected");
 database.ref("/players").on("value", function(snapshot) {
+  database
+    .ref("chat")
+    .orderByChild("dateAdded")
+    .limitToLast(1)
+    .once("value", function(snapshot) {
+      console.log(snapshot.val());
+      var message_key = Object.keys(snapshot.val());
+      var message = snapshot.val()[message_key].message;
+      var p = $("<p></p>");
+      p.text(message);
+      $(".chat").append(p);
+    });
   if (snapshot.child("2").exists() && !snapshot.child("1").exists()) {
     $("#name2")
       .find("h3")
@@ -31,6 +43,7 @@ database.ref("/players").on("value", function(snapshot) {
       .find("h3")
       .text("waiting for player 1");
   } else if (snapshot.child("1").exists() && !snapshot.child("2").exists()) {
+    console.log("fjfjfj");
     $("#name1")
       .find("h3")
       .text(snapshot.child(1).val().name);
@@ -43,6 +56,7 @@ database.ref("/players").on("value", function(snapshot) {
 connectionsRef.on("child_removed", function(snap) {
   restartGame(snap.val());
 });
+
 $("#addName").on("click", function(event) {
   event.preventDefault();
   database.ref("players").once("value", function(snapshot) {
@@ -56,8 +70,8 @@ $("#addName").on("click", function(event) {
       playerId = "2";
       startGame(playerId);
       $(".entry_val").css("visibility", "hidden");
-      $("#name1").css("border", "1px solid black");
-      $(".turn").text("Waiting for your  opponent to choose");
+      // $("#name1").css("border", "1px solid black");
+      // $(".turn").text("Waiting for your  opponent to choose");
     } else {
       database.ref("players/1").set({
         name: $("#playerName").val(),
@@ -70,13 +84,30 @@ $("#addName").on("click", function(event) {
     }
   });
 });
+function showDisconnectedMessage() {
+  database
+    .ref("chat")
+    .orderByChild("dateAdded")
+    .limitToLast(1)
+    .once("value", function(snapshot) {
+      console.log(snapshot.val());
+      var message_key = Object.keys(snapshot.val());
+      var message = snapshot.val()[message_key].message;
+      var p = $("<p></p>");
+      p.text(message);
+      $(".chat").append(p);
+    });
+}
 function restartGame(id) {
+  $(".choices1, .choices2").css("visibility", "hidden");
   database.ref("players/" + id).once("value", function(snapshot) {
     database.ref("chat").push({
       message: snapshot.val().name + " has disconnected.",
       dateAdded: firebase.database.ServerValue.TIMESTAMP
     });
   });
+  showDisconnectedMessage();
+  database.ref("players/" + id).remove();
 
   $(".turn").text("Waiting for another player to join");
   $("#name" + id).html("<h3>Waiting for player#" + id + ":</h3>");
@@ -91,7 +122,7 @@ function restartGame(id) {
       wins: 0
     });
   }
-  database.ref("players/turn").update(0);
+  database.ref("players/turn").set(0);
 
   database.ref("players/" + id).remove();
 }
@@ -149,6 +180,7 @@ function pressedButton() {
   });
 }
 function showTurn() {
+  console.log(turn);
   if (turn === 1) {
     $("#result").text("");
     $("#name1")
@@ -235,10 +267,6 @@ function showTurn() {
     }
   }
 }
-
-window.onbeforeunload = function() {
-  console.log("you are leaving");
-};
 
 $("#newMessage").on("click", addNewMessage);
 
