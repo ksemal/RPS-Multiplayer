@@ -23,33 +23,20 @@ var connectionsRef = database.ref("/connections");
 
 var connectedRef = database.ref(".info/connected");
 database.ref("/players").on("value", function(snapshot) {
-  database
-    .ref("chat")
-    .orderByChild("dateAdded")
-    .limitToLast(1)
-    .once("value", function(snapshot) {
-      console.log(snapshot.val());
-      var message_key = Object.keys(snapshot.val());
-      var message = snapshot.val()[message_key].message;
-      var p = $("<p></p>");
-      p.text(message);
-      $(".chat").append(p);
-    });
   if (snapshot.child("2").exists() && !snapshot.child("1").exists()) {
     $("#name2")
       .find("h3")
       .text(snapshot.child(2).val().name);
     $("#name1")
       .find("h3")
-      .text("waiting for player 1");
+      .text("waiting for player #1:");
   } else if (snapshot.child("1").exists() && !snapshot.child("2").exists()) {
-    console.log("fjfjfj");
     $("#name1")
       .find("h3")
       .text(snapshot.child(1).val().name);
     $("#name2")
       .find("h3")
-      .text("waiting for player 2");
+      .text("waiting for player #2:");
   }
 });
 
@@ -70,8 +57,6 @@ $("#addName").on("click", function(event) {
       playerId = "2";
       startGame(playerId);
       $(".entry_val").css("visibility", "hidden");
-      // $("#name1").css("border", "1px solid black");
-      // $(".turn").text("Waiting for your  opponent to choose");
     } else {
       database.ref("players/1").set({
         name: $("#playerName").val(),
@@ -84,29 +69,18 @@ $("#addName").on("click", function(event) {
     }
   });
 });
-function showDisconnectedMessage() {
-  database
-    .ref("chat")
-    .orderByChild("dateAdded")
-    .limitToLast(1)
-    .once("value", function(snapshot) {
-      console.log(snapshot.val());
-      var message_key = Object.keys(snapshot.val());
-      var message = snapshot.val()[message_key].message;
-      var p = $("<p></p>");
-      p.text(message);
-      $(".chat").append(p);
-    });
-}
+
+database.ref("players").on("child_removed", function(oldChildSnapshot) {
+  database.ref("chat").push({
+    name: "service",
+    message: oldChildSnapshot.val().name + " has disconnected.",
+    dateAdded: firebase.database.ServerValue.TIMESTAMP
+  });
+});
+
 function restartGame(id) {
   $(".choices1, .choices2").css("visibility", "hidden");
-  database.ref("players/" + id).once("value", function(snapshot) {
-    database.ref("chat").push({
-      message: snapshot.val().name + " has disconnected.",
-      dateAdded: firebase.database.ServerValue.TIMESTAMP
-    });
-  });
-  showDisconnectedMessage();
+
   database.ref("players/" + id).remove();
 
   $(".turn").text("Waiting for another player to join");
@@ -154,8 +128,6 @@ function startGame(id) {
       var obj = snapshot.val();
       var arr = Object.keys(snapshot.val());
       for (let i in arr) {
-        // console.log(arr[i]);
-        // console.log(obj[arr[i]].name);
         $("#name" + arr[i])
           .find("h3")
           .text(obj[arr[i]].name);
@@ -263,7 +235,7 @@ function showTurn() {
         database.ref("players/").update({
           turn: 1
         });
-      }, 8000);
+      }, 5000);
     }
   }
 }
@@ -273,7 +245,7 @@ $("#newMessage").on("click", addNewMessage);
 function addNewMessage(event) {
   event.preventDefault();
 
-  database.ref("players/chat").push({
+  database.ref("chat").push({
     id: playerId,
     name: $("#name" + playerId)
       .find("h3")
@@ -284,21 +256,27 @@ function addNewMessage(event) {
   $(".message").val("");
 }
 database
-  .ref("players/chat")
+  .ref("chat")
   .orderByChild("dateAdded")
   .on("child_added", function(snapshot) {
-    if (snapshot.val().id === "1") {
-      var nameSpan = $("<span>")
-        .addClass("blue")
-        .text(snapshot.val().name + ": ");
+    if (snapshot.val().name === "") {
+      var p = "";
     } else {
-      var nameSpan = $("<span>")
-        .addClass("green")
-        .text(snapshot.val().name + ": ");
+      if (snapshot.val().id === "1") {
+        var nameSpan = $("<span>")
+          .addClass("blue")
+          .text(snapshot.val().name + ": ");
+      } else if (snapshot.val().id === "2") {
+        var nameSpan = $("<span>")
+          .addClass("green")
+          .text(snapshot.val().name + ": ");
+      } else if (snapshot.val().name === "service") {
+        var nameSpan = "";
+      }
+      var messageSpan = $("<span>")
+        .addClass("MessageText")
+        .text(snapshot.val().message);
+      var p = $("<p>").append(nameSpan, messageSpan);
     }
-    var messageSpan = $("<span>")
-      .addClass("MessageText")
-      .text(snapshot.val().message);
-    var p = $("<p>").append(nameSpan, messageSpan);
     $(".chat").append(p);
   });
