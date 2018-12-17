@@ -22,21 +22,60 @@ var turn = 0;
 var connectionsRef = database.ref("/connections");
 
 var connectedRef = database.ref(".info/connected");
-database.ref("/players").on("value", function(snapshot) {
-  if (snapshot.child("2").exists() && !snapshot.child("1").exists()) {
+database.ref("players").on("value", function(snapshot) {
+  if (snapshot.child("1").exists() && snapshot.child("2").exists()) {
+    $("#name1")
+      .find("h3")
+      .text(snapshot.child(1).val().name);
     $("#name2")
       .find("h3")
       .text(snapshot.child(2).val().name);
     $("#name1")
+      .find(".W_L")
+      .text(
+        "Losses: " +
+          snapshot.child("1").val().losses +
+          " Wins: " +
+          snapshot.child("1").val().wins
+      );
+    $("#name2")
+      .find(".W_L")
+      .text(
+        "Losses: " +
+          snapshot.child("2").val().losses +
+          " Wins: " +
+          snapshot.child("2").val().wins
+      );
+  } else if (snapshot.child("2").exists() && !snapshot.child("1").exists()) {
+    $("#name2")
       .find("h3")
-      .text("waiting for player #1:");
+      .text(snapshot.child(2).val().name);
+    $("#name2")
+      .find(".W_L")
+      .text(
+        "Losses: " +
+          snapshot.child("2").val().losses +
+          " Wins: " +
+          snapshot.child("2").val().wins
+      );
+    $("#name1")
+      .find("h3")
+      .text("Waiting for player #1");
   } else if (snapshot.child("1").exists() && !snapshot.child("2").exists()) {
     $("#name1")
       .find("h3")
       .text(snapshot.child(1).val().name);
     $("#name2")
       .find("h3")
-      .text("waiting for player #2:");
+      .text("Waiting for player #2");
+    $("#name1")
+      .find(".W_L")
+      .text(
+        "Losses: " +
+          snapshot.child("1").val().losses +
+          " Wins: " +
+          snapshot.child("1").val().wins
+      );
   }
 });
 
@@ -70,6 +109,32 @@ $("#addName").on("click", function(event) {
   });
 });
 
+function startGame(playerID) {
+  console.log(playerID);
+  database.ref("players/" + playerID).once("value", function(snapshot) {
+    $("#playerId").text(
+      "Hello, " + snapshot.val().name + "! Yor are player# " + playerID
+    );
+    $("#name" + playerID)
+      .find("h3")
+      .text(snapshot.val().name);
+
+    $("#name" + playerID)
+      .find(".W_L")
+      .text(
+        "Losses: " + snapshot.val().losses + " Wins: " + snapshot.val().wins
+      );
+  });
+  watchConnection(playerID);
+
+  database.ref("players/turn").on("value", function(snapshot) {
+    turn = snapshot.val();
+    showTurn(playerID);
+  });
+
+  $(".choices1, .choices2").on("click", "button", pressedButton);
+}
+
 database.ref("players").on("child_removed", function(oldChildSnapshot) {
   database.ref("chat").push({
     name: "service",
@@ -80,66 +145,40 @@ database.ref("players").on("child_removed", function(oldChildSnapshot) {
 
 function restartGame(id) {
   $(".choices1, .choices2").css("visibility", "hidden");
-
   database.ref("players/" + id).remove();
-
   $(".turn").text("Waiting for another player to join");
-  $("#name" + id).html("<h3>Waiting for player#" + id + ":</h3>");
+  $("#name" + id).html("<h3>Waiting for player#" + id + "</h3>");
+  $("#name1,#name2").css("border", "0px solid black");
+
   if (id === "1") {
     database.ref("players/2").update({
       losses: 0,
       wins: 0
     });
+    database
+      .ref("players/2")
+      .child("choice")
+      .remove();
   } else {
     database.ref("players/1").update({
       losses: 0,
       wins: 0
     });
+    database
+      .ref("players/1")
+      .child("choice")
+      .remove();
   }
-  database.ref("players/turn").set(0);
-
-  database.ref("players/" + id).remove();
+  database.ref("players/turn").set(1);
 }
 
-function watchConnection() {
+function watchConnection(playerId) {
   connectedRef.on("value", function(snap) {
     if (snap.val()) {
       var con = connectionsRef.push(playerId);
       con.onDisconnect().remove();
     }
   });
-}
-
-function startGame(id) {
-  database.ref("players/" + id).on("value", function(snapshot) {
-    $("#playerId").text(
-      "Hello, " + snapshot.val().name + "! Yor are player# " + id
-    );
-  });
-  watchConnection(playerId);
-
-  database.ref("players/turn").on("value", function(snapshot) {
-    turn = snapshot.val();
-    showTurn();
-  });
-
-  database.ref("players/").on("value", function(snapshot) {
-    if (snapshot.exists()) {
-      var obj = snapshot.val();
-      var arr = Object.keys(snapshot.val());
-      for (let i in arr) {
-        $("#name" + arr[i])
-          .find("h3")
-          .text(obj[arr[i]].name);
-
-        $("#name" + arr[i])
-          .find(".W_L")
-          .text("Losses: " + obj[arr[i]].losses + " Wins: " + obj[arr[i]].wins);
-      }
-    }
-  });
-
-  $(".choices1, .choices2").on("click", "button", pressedButton);
 }
 
 function pressedButton() {
@@ -151,8 +190,11 @@ function pressedButton() {
     turn: turn
   });
 }
-function showTurn() {
+function showTurn(playerID) {
+  console.log("start new game");
   console.log(turn);
+  console.log(playerID);
+
   if (turn === 1) {
     $("#result").text("");
     $("#name1")
