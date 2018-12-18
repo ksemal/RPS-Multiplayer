@@ -24,6 +24,7 @@ var connectionsRef = database.ref("/connections");
 var connectedRef = database.ref(".info/connected");
 database.ref("players").on("value", function(snapshot) {
   if (snapshot.child("1").exists() && snapshot.child("2").exists()) {
+    console.log("both");
     $("#name1")
       .find("h3")
       .text(snapshot.child(1).val().name);
@@ -47,6 +48,7 @@ database.ref("players").on("value", function(snapshot) {
           snapshot.child("2").val().wins
       );
   } else if (snapshot.child("2").exists() && !snapshot.child("1").exists()) {
+    console.log("second");
     $("#name2")
       .find("h3")
       .text(snapshot.child(2).val().name);
@@ -62,6 +64,7 @@ database.ref("players").on("value", function(snapshot) {
       .find("h3")
       .text("Waiting for player #1");
   } else if (snapshot.child("1").exists() && !snapshot.child("2").exists()) {
+    console.log("first");
     $("#name1")
       .find("h3")
       .text(snapshot.child(1).val().name);
@@ -80,6 +83,7 @@ database.ref("players").on("value", function(snapshot) {
 });
 
 connectionsRef.on("child_removed", function(snap) {
+  console.log("connection removed: " + snap.val());
   restartGame(snap.val());
 });
 
@@ -129,6 +133,7 @@ function startGame(playerID) {
 
   database.ref("players/turn").on("value", function(snapshot) {
     turn = snapshot.val();
+    console.log("TURN CHANGED");
     showTurn(playerID);
   });
 
@@ -144,10 +149,16 @@ database.ref("players").on("child_removed", function(oldChildSnapshot) {
 });
 
 function restartGame(id) {
+  console.log("RESTART GAME: " + id);
   $(".choices1, .choices2").css("visibility", "hidden");
   database.ref("players/" + id).remove();
   $(".turn").text("Waiting for another player to join");
-  $("#name" + id).html("<h3>Waiting for player#" + id + "</h3>");
+  $("#name" + id)
+    .find("h3")
+    .text("Waiting for player#" + id);
+  $("#name" + id)
+    .find(".W_L")
+    .text("");
   $("#name1,#name2").css("border", "0px solid black");
 
   if (id === "1") {
@@ -169,7 +180,11 @@ function restartGame(id) {
       .child("choice")
       .remove();
   }
-  database.ref("players/turn").set(1);
+  losses1 = 0;
+  wins1 = 0;
+  losses2 = 0;
+  wins2 = 0;
+  database.ref("players/turn").set(0);
 }
 
 function watchConnection(playerId) {
@@ -192,9 +207,11 @@ function pressedButton() {
 }
 function showTurn(playerID) {
   console.log("start new game");
-  console.log(turn);
-  console.log(playerID);
-
+  console.log("turn: " + turn);
+  console.log("playerID: " + playerID);
+  if (turn === 0) {
+    turn++;
+  }
   if (turn === 1) {
     $("#result").text("");
     $("#name1")
@@ -215,6 +232,7 @@ function showTurn(playerID) {
       $(".choices2").css("visibility", "hidden");
     }
   } else if (turn === 2) {
+    console.log("why?");
     $("#name1").css("border", "0px solid black");
     $("#name2").css("border", "1px solid black");
     if (playerId === "1") {
