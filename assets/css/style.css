@@ -1,9 +1,7 @@
 .container-fluid {
   background-image: url("../images/bananas.png");
 }
-.header {
-  margin-top: 20px;
-}
+
 #name1 {
   background-color: rgba(255, 255, 255, 0.644);
   min-height: 350px;
@@ -133,10 +131,11 @@ p {
   .chatdiv {
     z-index: 1;
     margin-top: 0px;
+    margin-top: 15px;
   }
   #name1,
   #name2 {
-    margin-bottom: 15px;
+    margin-top: 15px;
     min-height: 50px;
   }
 }
