@@ -6,44 +6,80 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Rock Paper Scissors game</title>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/reset.css" />
     <link
       rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
     />
     <link rel="stylesheet" type="text/css" href="assets/css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Amatic+SC|Crete+Round|Gloria+Hallelujah|Monofett"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+      integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP"
+      crossorigin="anonymous"
+    />
     <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
   </head>
   <body>
-    <div id="playerId"></div>
-    <form class="entry_val">
-      Enter your name: <input id="playerName" type="text" /><br />
-      <input id="addName" type="submit" value="Start Game" /> <br />
-    </form>
-    <p class="turn"></p>
-    <div id="name1">
-      <h3>Waiting for player#1</h3>
-      <div class="choices1">
-        <button>Rock</button> <button>Paper</button> <button>Scissors</button>
+    <div class="container-fluid">
+      <div class="row header">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+          <div id="playerId"></div>
+          <p class="turn">Welcome to the game</p>
+        </div>
+        <div id="result" class="col-md-4"></div>
+        <div class="col-md-4">
+          <p class="title">Rock Paper Scissors</p>
+          <form class="entry_val">
+            <input id="playerName" type="text" placeholder="Enter your name" />
+            <input id="addName" type="submit" value="Start" />
+          </form>
+        </div>
       </div>
-      <p class="your_choice"></p>
-      <p class="W_L"></p>
-    </div>
-    <br /><br /><br /><br />
-    <div id="name2">
-      <h3>Waiting for player#2</h3>
-      <div class="choices2">
-        <button>Rock</button> <button>Paper</button> <button>Scissors</button>
+
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div id="name1" class="col-md-4">
+          <h3>Waiting for player#1</h3>
+          <div class="choices1">
+            <i data="Rock" class="fas fa-hand-rock"></i>
+            <i data="Paper" class="fas fa-hand-paper"></i>
+            <i data="Scissors" class="fas fa-hand-scissors"></i>
+          </div>
+          <p class="your_choice"></p>
+          <p class="W_L"></p>
+        </div>
+        <div class="col-md-2"></div>
+        <div id="name2" class="col-md-4">
+          <h3>Waiting for player#2</h3>
+          <div class="choices2">
+            <i data="Rock" class="fas fa-hand-rock"></i>
+            <i data="Paper" class="fas fa-hand-paper"></i>
+            <i data="Scissors" class="fas fa-hand-scissors"></i>
+          </div>
+          <p class="your_choice"></p>
+          <p class="W_L"></p>
+        </div>
+        <div class="col-md-1"></div>
       </div>
-      <p class="your_choice"></p>
-      <p class="W_L"></p>
+      <div class="row">
+        <div class="col-md-4"></div>
+        <div class="chatdiv col-md-4">
+          <div class="chat"></div>
+          <form class="sendMessage">
+            <input class="message" type="text" />
+            <button id="newMessage" type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
     </div>
-    <br /><br />
-    <div id="result"></div>
-    <div class="chat"></div>
-    <form>
-      <input class="message" type="text" />
-      <button id="newMessage" type="submit">Send</button>
-    </form>
+
     <script src="assets/js/javascript.js"></script>
   </body>
 </html>

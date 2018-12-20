@@ -133,11 +133,10 @@ function startGame(playerID) {
 
   database.ref("players/turn").on("value", function(snapshot) {
     turn = snapshot.val();
-    console.log("TURN CHANGED");
     showTurn(playerID);
   });
 
-  $(".choices1, .choices2").on("click", "button", pressedButton);
+  $(".choices1, .choices2").on("click", "i", pressedButton);
 }
 
 database.ref("players").on("child_removed", function(oldChildSnapshot) {
@@ -159,7 +158,7 @@ function restartGame(id) {
   $("#name" + id)
     .find(".W_L")
     .text("");
-  $("#name1,#name2").css("border", "0px solid black");
+  $("#name1, #name2").css("border", "0px solid orange");
 
   if (id === "1") {
     database.ref("players/2").update({
@@ -198,7 +197,7 @@ function watchConnection(playerId) {
 
 function pressedButton() {
   database.ref("players/" + playerId).update({
-    choice: $(this).text()
+    choice: $(this).attr("data")
   });
   turn++;
   database.ref("players").update({
@@ -210,7 +209,12 @@ function showTurn(playerID) {
   console.log("turn: " + turn);
   console.log("playerID: " + playerID);
   if (turn === 0) {
-    turn++;
+    $(".choices1, .choices2").css("visibility", "hidden");
+    database.ref("players").once("value", function(snapshot) {
+      if (snapshot.child("1").exists() && snapshot.child("2").exists()) {
+        turn++;
+      }
+    });
   }
   if (turn === 1) {
     $("#result").text("");
@@ -220,9 +224,14 @@ function showTurn(playerID) {
     $("#name2")
       .find(".your_choice")
       .text("");
-    $("#name1").css("border", "1px solid black");
-    $("#name2").css("border", "0px solid black");
+    $("#name1").css("border", "5px solid orange");
+    $("#name2").css("border", "0px solid orange");
     if (playerId === "1") {
+      console.log(
+        $("#name2")
+          .find("h3")
+          .text()
+      );
       $(".choices1").css("visibility", "visible");
       $(".choices2").css("visibility", "hidden");
       $(".turn").text("It's your turn");
@@ -232,9 +241,9 @@ function showTurn(playerID) {
       $(".choices2").css("visibility", "hidden");
     }
   } else if (turn === 2) {
-    console.log("why?");
-    $("#name1").css("border", "0px solid black");
-    $("#name2").css("border", "1px solid black");
+    $("#name1").css("border", "0px solid orange");
+    $("#name2").css("border", "5px solid orange");
+
     if (playerId === "1") {
       $(".turn").text("Waiting for your  opponent to choose");
       $(".choices1").css("visibility", "hidden");
@@ -324,7 +333,7 @@ database
     } else {
       if (snapshot.val().id === "1") {
         var nameSpan = $("<span>")
-          .addClass("blue")
+          .addClass("rose")
           .text(snapshot.val().name + ": ");
       } else if (snapshot.val().id === "2") {
         var nameSpan = $("<span>")

@@ -1,37 +1,130 @@
+.container-fluid {
+  background-image: url("../images/bananas.png");
+  height: 100vh;
+}
+.header {
+  margin-top: 20px;
+}
 #name1 {
-  background-color: rgb(165, 248, 206);
-  width: 500px;
-  height: 200px;
+  background-color: rgba(255, 255, 255, 0.644);
+  min-height: 350px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: left;
 }
 #name2 {
-  background-color: rgb(248, 202, 165);
-  width: 500px;
-  height: 200px;
+  background-color: rgba(255, 255, 255, 0.644);
+  min-height: 350px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: right;
 }
+
 #result {
-  background-color: rgb(197, 165, 248);
-  right: 0;
-  position: fixed;
-  top: 0;
-  height: 200px;
-  width: 200px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  height: 100px;
+  margin-bottom: 85px;
+  background-color: rgba(255, 255, 255, 0.644);
 }
-#playerId {
-  margin: 10px auto;
-}
+
 .choices1,
 .choices2 {
   visibility: hidden;
 }
-.chat {
-  width: 300px;
-  height: 300px;
-  background-color: lightgrey;
-  margin-bottom: 10px;
+.chatdiv {
+  background-color: rgb(255, 255, 255);
+  height: 450px;
+  z-index: 2;
+  margin-top: -400px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 10px solid rgba(204, 204, 204, 0.185);
 }
-.blue {
-  color: blue;
+.chat {
+  overflow: scroll;
+  height: 380px;
+}
+.sendMessage {
+  margin-top: 10px;
+}
+.rose {
+  color: rgba(243, 150, 87, 0.651);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 15px;
 }
 .green {
-  color: green;
+  color: #87ccc3bb;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 15px;
+}
+.MessageText {
+  font-family: "Gloria Hallelujah", cursive;
+  font-size: 18px;
+}
+#addName,
+#newMessage {
+  border-radius: 4px;
+  width: 100px;
+  height: 30px;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.822);
+  background-color: orange;
+  font-family: "Gloria Hallelujah", cursive;
+  font-size: 15px;
+}
+#playerName,
+.message {
+  width: 180px;
+  font-family: "Gloria Hallelujah", cursive;
+  font-size: 20px;
+}
+
+.turn {
+  text-align: center;
+  margin-top: 20px;
+  font-family: "Crete Round", serif;
+  font-size: 25px;
+  background-color: rgba(255, 255, 255, 0.418);
+  color: orange;
+  border: 3px dashed rgba(255, 139, 72, 0.714);
+}
+
+#playerId {
+  text-align: center;
+  font-family: "Amatic SC", cursive;
+  font-size: 32px;
+  background-color: rgb(255, 255, 255);
+  color: orange;
+}
+h3,
+#result {
+  font-family: "Amatic SC", cursive;
+  font-size: 40px;
+  color: orange;
+}
+#result {
+  text-align: center;
+  padding-top: 20px;
+}
+p {
+  font-family: "Crete Round", serif;
+  font-size: 20px;
+  color: gray;
+}
+.entry_val {
+  text-align: center;
+}
+.title {
+  font-family: "Monofett", cursive;
+  color: rgb(224, 178, 127);
+  font-size: 60px;
+  text-align: center;
+  line-height: 0.9;
+}
+.fas {
+  font-size: 80px;
+  padding-right: 15px;
+  color: #87ccc3bb;
+  margin-top: 15px;
+}
+.fas:hover {
+  color: orange;
 }
