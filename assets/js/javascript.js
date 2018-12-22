@@ -22,6 +22,7 @@ var turn = 0;
 var connectionsRef = database.ref("/connections");
 
 var connectedRef = database.ref(".info/connected");
+
 database.ref("players").on("value", function(snapshot) {
   if (snapshot.child("1").exists() && snapshot.child("2").exists()) {
     console.log("both");
@@ -48,7 +49,6 @@ database.ref("players").on("value", function(snapshot) {
           snapshot.child("2").val().wins
       );
   } else if (snapshot.child("2").exists() && !snapshot.child("1").exists()) {
-    console.log("second");
     $("#name2")
       .find("h3")
       .text(snapshot.child(2).val().name);
@@ -64,7 +64,6 @@ database.ref("players").on("value", function(snapshot) {
       .find("h3")
       .text("Waiting for player #1");
   } else if (snapshot.child("1").exists() && !snapshot.child("2").exists()) {
-    console.log("first");
     $("#name1")
       .find("h3")
       .text(snapshot.child(1).val().name);
@@ -82,9 +81,9 @@ database.ref("players").on("value", function(snapshot) {
   }
 });
 
-connectionsRef.on("child_removed", function(snap) {
-  console.log("connection removed: " + snap.val());
-  restartGame(snap.val());
+connectionsRef.on("child_removed", function(oldChildSnapshot) {
+  console.log("connection removed: " + oldChildSnapshot.val());
+  restartGame(oldChildSnapshot.val());
 });
 
 $("#addName").on("click", function(event) {
@@ -160,25 +159,35 @@ function restartGame(id) {
     .text("");
   $("#name1, #name2").css("border", "0px solid orange");
 
-  if (id === "1") {
-    database.ref("players/2").update({
-      losses: 0,
-      wins: 0
-    });
-    database
-      .ref("players/2")
-      .child("choice")
-      .remove();
-  } else {
-    database.ref("players/1").update({
-      losses: 0,
-      wins: 0
-    });
-    database
-      .ref("players/1")
-      .child("choice")
-      .remove();
-  }
+  //
+
+  database.ref("players").on("value", function(snapshot) {
+    if (!snapshot.child("1").exists() && !snapshot.child("2").exists()) {
+      database.ref("players").remove();
+      database.ref("chat").remove();
+      return false;
+    }
+    if (id === "1" && snapshot.child("2").exists()) {
+      database.ref("players/2").update({
+        losses: 0,
+        wins: 0
+      });
+      database
+        .ref("players/2")
+        .child("choice")
+        .remove();
+    } else if (id === "2" && snapshot.child("1").exists()) {
+      database.ref("players/1").update({
+        losses: 0,
+        wins: 0
+      });
+      database
+        .ref("players/1")
+        .child("choice")
+        .remove();
+    }
+  });
+
   losses1 = 0;
   wins1 = 0;
   losses2 = 0;
@@ -227,11 +236,6 @@ function showTurn(playerID) {
     $("#name1").css("border", "5px solid orange");
     $("#name2").css("border", "0px solid orange");
     if (playerId === "1") {
-      console.log(
-        $("#name2")
-          .find("h3")
-          .text()
-      );
       $(".choices1").css("visibility", "visible");
       $(".choices2").css("visibility", "hidden");
       $(".turn").text("It's your turn");
