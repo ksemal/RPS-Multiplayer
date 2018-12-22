@@ -80,7 +80,9 @@ database.ref("players").on("value", function(snapshot) {
       );
   }
 });
-
+window.onbeforeunload = function() {
+  database.ref("players/" + playerId).remove();
+};
 connectionsRef.on("child_removed", function(oldChildSnapshot) {
   console.log("connection removed: " + oldChildSnapshot.val());
   restartGame(oldChildSnapshot.val());
@@ -158,8 +160,6 @@ function restartGame(id) {
     .find(".W_L")
     .text("");
   $("#name1, #name2").css("border", "0px solid orange");
-
-  //
 
   database.ref("players").on("value", function(snapshot) {
     if (!snapshot.child("1").exists() && !snapshot.child("2").exists()) {
