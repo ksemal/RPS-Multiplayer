@@ -8,3 +8,5 @@ Welcome to Rock Scissors Paper game. Only two users can play at the same time.
 - The game will track each player's wins and losses. You can see the score under your name.
 - In addition chat is availible for current players! You can type in your message in the chat window and click `send`
 - In case one player leaves the game, another one still can continue playing without refreshing the page
+
+![ScreenShot](assets/images/ScreenShot.png)
