@@ -1,3 +1,7 @@
+body,
+html {
+  height: 100%;
+}
 .container-fluid {
   background-image: url("../images/bananas.png");
   height: 100%;
@@ -131,12 +135,16 @@ p {
   }
   .chatdiv {
     z-index: 1;
-    margin-top: 0px;
     margin-top: 15px;
   }
   #name1,
   #name2 {
     margin-top: 15px;
     min-height: 50px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .chatdiv {
+    margin-top: 40px;
   }
 }
